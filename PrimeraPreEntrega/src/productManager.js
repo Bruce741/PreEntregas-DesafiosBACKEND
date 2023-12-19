@@ -28,8 +28,16 @@ class ProductManager {
   };
 
   getProducts = async () => {
-    let productosLeidos = await fs.promises.readFile(this.path, "utf-8");
-    return JSON.parse(productosLeidos);
+    try {
+      let productosLeidos = await fs.promises.readFile(this.path, "utf-8");
+      if (!productosLeidos.trim()) {
+        return []; 
+      }
+      return JSON.parse(productosLeidos);
+    } catch (error) {
+      console.error(error);
+      return []; 
+    }
   };
 
   getProductsById = async (id) => {

@@ -77,6 +77,7 @@ productsRoutes.post("/", async (req, res) => {
     console.error(error);
     res.status(500).json({ message: "Error al agregar el producto" });
   }
+  io.emit('updateProducts', products);
 });
 
 // Actualizar producto por ID
@@ -101,6 +102,7 @@ productsRoutes.put("/:pid", async (req, res) => {
     console.error(error);
     res.status(500).json({ message: "Product not Added" });
   }
+  io.emit('updateProducts', products);
 });
 
 // Eliminar un producto por su ID
@@ -124,6 +126,7 @@ productsRoutes.delete("/:pid", async (req, res) => {
     console.error(error);
     res.status(500).json({ message: "Product Not Deleted" });
   }
+  io.emit('updateProducts', products);
 });
 
 export default productsRoutes;
