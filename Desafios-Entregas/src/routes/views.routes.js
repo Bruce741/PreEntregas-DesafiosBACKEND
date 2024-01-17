@@ -7,10 +7,10 @@ const productManager = new ProductManager("./src/productos.json");
 viewsRouter.get("/", async (req, res) => {
     try {
       const products = await productManager.getProducts();
-      res.render("index", { products }); 
+      return res.render('index', {products: products});
     } catch (error) {
       console.error(error);
-      res.status(500).json({ message: "Error al obtener los productos" });
+      return res.status(500).json({ message: "Error al obtener los productos" });
     }
   });
 
