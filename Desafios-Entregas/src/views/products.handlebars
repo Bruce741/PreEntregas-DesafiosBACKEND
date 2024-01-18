@@ -1,0 +1,18 @@
+<h1>Products</h1>
+{{#each payload}}
+  <p>Id: {{this._id}}</p>
+  <p>Title: {{this.description}}</p>
+  <p>Price: {{this.price}}</p>
+  <p>Status: {{this.available}}</p>
+  <p>Code: {{this.code}}</p>
+  <p>Stock: {{ths.stock}}</p>
+  <button id="{{this._id}}Btn">Agregar al carrito</button>
+{{/each}}
+
+{{#if hasPrevPage}}
+  <button><a href="/products?page={{prevPage}}">Anterior</a></button>
+{{/if}}
+
+{{#if hasNextPage}}
+  <button><a href="/products?page={{nextPage}}">Siguiente</a></button>
+{{/if}}

@@ -1,5 +1,6 @@
 import { Router } from "express";
-import ProductManager from "../productManager.js";
+import ProductManager from "../dao/managerFS/productManager.js";
+import { productsModel } from "../dao/models/products.models.js";
 
 const productManager = new ProductManager("./src/productos.json");
 
@@ -7,11 +8,17 @@ const productsRoutes = Router();
 
 // Obtener todos los productos y el limite
 productsRoutes.get("/", async (req, res) => {
-  const { limit } = req.query;
-  let products = await productManager.getProducts();
-
+  const [code, value] = query.split(':')
+  const { limit = 10, page = 1, query = "", sort = "" } = req.query;
+  let products = await productsModel.paginate({[code]: value},{
+    limit,
+    page,
+    sort: sort ? {price: sort} : {}
+  });
+  products.payload = products.docs
+  delete products.docs
   if (!limit) {
-    return res.send(products);
+    return res.send({...products});
   }
 
   let limitedProducts = [];
@@ -19,14 +26,14 @@ productsRoutes.get("/", async (req, res) => {
     if (products[i]) {
       limitedProducts.push(products[i]);
     }
-    return res.send(limitedProducts);
+    return res.send({ limitedProducts });
   }
 });
 
 // Obtener Productos por el ID
 productsRoutes.get("/:id", async (req, res) => {
   const { id } = req.params;
-  let product = await productManager.getProductsById(id);
+  let product = await productsModel.findOne({_id: id});
 
   if (!product) {
     return res.send("Producto no encontrado");
@@ -38,46 +45,13 @@ productsRoutes.get("/:id", async (req, res) => {
 // Añadir productos
 productsRoutes.post("/", async (req, res) => {
   try {
-    const {
-      title,
-      description,
-      code,
-      price,
-      available,
-      stock,
-      category,
-      thumbnails,
-    } = req.body;
-
-    if (
-      !title ||
-      !description ||
-      !code ||
-      !price ||
-      !available ||
-      !stock ||
-      !category
-    ) {
-      return res.status(400).json({
-        message: "Todos los campos son obligatorios excepto thumbnails",
-      });
-    }
-
-    await productManager.addProduct(
-      title,
-      description,
-      price,
-      thumbnails,
-      code,
-      stock
-    );
-
+    const newProduct = req.body;
+    const added = await productsModel.create(newProduct);
     res.status(201).json({ message: "Producto agregado correctamente" });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Error al agregar el producto" });
   }
-  io.emit('updateProducts', products);
 });
 
 // Actualizar producto por ID
@@ -90,43 +64,43 @@ productsRoutes.put("/:pid", async (req, res) => {
       return res.status(400).json({ message: "Missing Id" });
     }
 
-    const existingProduct = await productManager.getProductsById(pid);
+    const existingProduct = await productsModel.findOne({_id: pid});
     if (!existingProduct) {
       return res.status(404).json({ message: "Product Not Found" });
     }
 
-    await productManager.updateProduct(pid, updatedInfo);
+    await productsModel.updateOne(existingProduct, updatedInfo);
 
     res.json({ message: "Product Updated" });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Product not Added" });
   }
-  io.emit('updateProducts', products);
 });
 
 // Eliminar un producto por su ID
 productsRoutes.delete("/:pid", async (req, res) => {
   try {
     const { pid } = req.params;
-
+    
     if (!pid) {
       return res.status(400).json({ message: "Missing ID" });
     }
 
-    const existingProduct = await productManager.getProductsById(pid);
+    const existingProduct = await productsModel.findOne({_id: pid});
     if (!existingProduct) {
       return res.status(404).json({ message: "Product Not Found" });
     }
 
-    await productManager.deleteProduct(pid);
+    await productsModel.deleteOne(existingProduct);
 
     res.json({ message: "Product Deleted" });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Product Not Deleted" });
   }
-  io.emit('updateProducts', products);
 });
+
+
 
 export default productsRoutes;
