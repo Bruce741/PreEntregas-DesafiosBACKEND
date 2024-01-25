@@ -1,24 +1,52 @@
 import { Router } from "express";
-import ProductManager from "../dao/managerFS/productManager.js";
 import { productsModel } from "../dao/models/products.models.js";
 
 const viewsRouter = Router();
-const productManager = new ProductManager("./src/productos.json");
 
+// Vista default?
 viewsRouter.get("/", async (req, res) => {
   try {
-    const products = await productsModel.find();
-    return res.render("index", { products: products });
+    const products = await productsModel.find().lean();
+    return res.render("index", {products});
   } catch (error) {
     console.error(error);
     return res.status(500).json({ message: "Error al obtener los productos" });
   }
 });
 
-viewsRouter.get('/products', async (req, res)=>{
-  const {page} = req.query;
-  const products = await productsModel.find(10, page);
-  res.render('products', products)
-})
+// Vista para añadir productos
+viewsRouter.get("/add-products", (req,res) => {
+  res.render('add-products');
+});
 
+// Vista de los productos
+viewsRouter.get("/products", async (req,res) => {
+  const {limit = 10, page = 1, query = "", sort = ""} = req.query;
+  const [code,value] = query.split(":");
+  const products = await productsModel.paginate({[code]: value}, {
+    limit,
+    page,
+    sort: sort ? {precio: sort} : {}
+  });
+  products.payload = products.docs;
+  delete products.docs;
+  res.render('products', products)
+});
+
+// Vista del carro
+viewsRouter.get("/:cid", async (req, res) => {
+  try {
+    const { cid } = req.params;
+    const cart = await cartsModel.findOne({ _id: cid }).populate("products.product");
+
+    if (!cart) {
+      return res.status(404).json({ message: "Cart Not Found" });
+    }
+
+    res.render("cart", { cart });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Error fetching cart details" });
+  }
+});
 export default viewsRouter;

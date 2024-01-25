@@ -1,52 +1,54 @@
 import { Router } from "express";
 import ProductManager from "../dao/managerFS/productManager.js";
 import { productsModel } from "../dao/models/products.models.js";
+import { uploader } from "../utils/multer.js";
 
 const productManager = new ProductManager("./src/productos.json");
 
 const productsRoutes = Router();
 
-// Obtener todos los productos y el limite
+// Obtener todos los productos
 productsRoutes.get("/", async (req, res) => {
-  const [code, value] = query.split(':')
-  const { limit = 10, page = 1, query = "", sort = "" } = req.query;
-  let products = await productsModel.paginate({[code]: value},{
-    limit,
-    page,
-    sort: sort ? {price: sort} : {}
-  });
-  products.payload = products.docs
-  delete products.docs
-  if (!limit) {
-    return res.send({...products});
-  }
-
-  let limitedProducts = [];
-  for (let i = 0; i < limit; i++) {
-    if (products[i]) {
-      limitedProducts.push(products[i]);
+  try {
+    const { limit = 10, page = 1, query = "", sort = "" } = req.query;
+    const [code, value] = query.split(":");
+    const products = await productsModel.paginate({[code]: value}, {
+      limit,
+      page,
+      sort: sort ? {precio: sort} : {}
+    });
+    products.payload = products.docs;
+    delete products.docs;
+    if(products){
+      return {message: "ok", ...products} 
     }
-    return res.send({ limitedProducts });
+    else{
+      res.status(400).json({message: 'No encontrado'})
+    }
+  } catch (error) {
+    console.log(error);
+    res.status(400).json({ message: "Error al obtener todos los productos" });
   }
 });
 
 // Obtener Productos por el ID
 productsRoutes.get("/:id", async (req, res) => {
   const { id } = req.params;
-  let product = await productsModel.findOne({_id: id});
+  let product = await productsModel.findOne({ _id: id });
 
   if (!product) {
     return res.send("Producto no encontrado");
   }
 
-  return res.send(product);
+  return res.send({ product });
 });
 
 // Añadir productos
-productsRoutes.post("/", async (req, res) => {
+productsRoutes.post("/", uploader.single('file'), async (req, res) => {
   try {
     const newProduct = req.body;
-    const added = await productsModel.create(newProduct);
+    const path = req.file.path.split('public').join('');
+    const added = await productsModel.create({...newProduct, thumbnails: path} );
     res.status(201).json({ message: "Producto agregado correctamente" });
   } catch (error) {
     console.error(error);
@@ -64,14 +66,16 @@ productsRoutes.put("/:pid", async (req, res) => {
       return res.status(400).json({ message: "Missing Id" });
     }
 
-    const existingProduct = await productsModel.findOne({_id: pid});
+    const existingProduct = await productsModel.findOne({ _id: pid });
     if (!existingProduct) {
       return res.status(404).json({ message: "Product Not Found" });
     }
 
-    await productsModel.updateOne(existingProduct, updatedInfo);
+    const update = await productsModel.updateOne({ _id: pid }, updatedInfo);
 
-    res.json({ message: "Product Updated" });
+    if (update.ModifiedCount > 0) {
+      return res.status(201).json({ message: "Product Updated" });
+    }
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Product not Added" });
@@ -82,12 +86,12 @@ productsRoutes.put("/:pid", async (req, res) => {
 productsRoutes.delete("/:pid", async (req, res) => {
   try {
     const { pid } = req.params;
-    
+
     if (!pid) {
       return res.status(400).json({ message: "Missing ID" });
     }
 
-    const existingProduct = await productsModel.findOne({_id: pid});
+    const existingProduct = await productsModel.findOne({ _id: pid });
     if (!existingProduct) {
       return res.status(404).json({ message: "Product Not Found" });
     }
@@ -100,7 +104,5 @@ productsRoutes.delete("/:pid", async (req, res) => {
     res.status(500).json({ message: "Product Not Deleted" });
   }
 });
-
-
 
 export default productsRoutes;
