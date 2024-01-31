@@ -4,6 +4,7 @@ import productsRoutes from "./routes/products.routes.js";
 import handlebars from 'express-handlebars';
 import viewsRouter from "./routes/views.routes.js";
 import mongoose from "mongoose";
+import cookieParser from "cookie-parser";
 
 const PORT = 8080;
 const app = express();
@@ -12,6 +13,14 @@ const app = express();
 app.use(express.json());
 app.use(urlencoded({extended: true}));
 app.use(express.static('public'));
+
+// Cookies
+app.use(cookieParser());
+
+app.get("/setCookie", (req,res) =>{
+  res.cookie('codercookie', 'Esto es una cookie', {maxAge: 5000}).send({message: "Cookie seteada"})
+})
+
 
 // Mongo settings
 mongoose.connect('mongodb+srv://lopezbruno12319:ceg6DJy3V8uTRcpM@preentrega2.4n8zuto.mongodb.net/Eccomerce')

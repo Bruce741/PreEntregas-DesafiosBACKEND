@@ -18,6 +18,6 @@ const productsSchema = mongoose.Schema({
     thumbnails: String,
 })
 
-productsSchema.plugin(mongoosePaginate);
+// productsSchema.plugin(mongoosePaginate);
 
 export const productsModel = mongoose.model(productsCollection, productsSchema)

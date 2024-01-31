@@ -29,7 +29,7 @@ productsRoutes.get("/", async (req, res) => {
     console.log(error);
     res.status(400).json({ message: "Error al obtener todos los productos" });
   }
-});
+}); 
 
 // Obtener Productos por el ID
 productsRoutes.get("/:id", async (req, res) => {
@@ -47,7 +47,7 @@ productsRoutes.get("/:id", async (req, res) => {
 productsRoutes.post("/", uploader.single('file'), async (req, res) => {
   try {
     const newProduct = req.body;
-    const path = req.file.path.split('public').join('');
+    const path = req.file ? req.file.path.split('public').join('') : '';
     const added = await productsModel.create({...newProduct, thumbnails: path} );
     res.status(201).json({ message: "Producto agregado correctamente" });
   } catch (error) {
