@@ -20,7 +20,7 @@ productsRoutes.get("/", async (req, res) => {
     products.payload = products.docs;
     delete products.docs;
     if(products){
-      return {message: "ok", ...products} 
+      return res.send({message: "ok", ...products} )
     }
     else{
       res.status(400).json({message: 'No encontrado'})
@@ -37,7 +37,7 @@ productsRoutes.get("/:id", async (req, res) => {
   let product = await productsModel.findOne({ _id: id });
 
   if (!product) {
-    return res.send("Producto no encontrado");
+     res.send("Producto no encontrado");
   }
 
   return res.send({ product });

@@ -5,6 +5,13 @@ import handlebars from 'express-handlebars';
 import viewsRouter from "./routes/views.routes.js";
 import mongoose from "mongoose";
 import cookieParser from "cookie-parser";
+import path from "path";
+import { fileURLToPath } from "url";
+
+// Configuracion Extra para path
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 
 const PORT = 8080;
 const app = express();
@@ -34,7 +41,7 @@ const hbs = handlebars.create({
 
 // Handlebars settings
 app.engine('handlebars', hbs.engine);
-app.set('views', 'src/views');
+app.set('views', path.join(__dirname, "views"));
 app.set('view engine', 'handlebars');
 
 // Routes
