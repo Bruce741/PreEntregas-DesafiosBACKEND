@@ -3,8 +3,7 @@ import cartsRoutes from "./routes/carts.routes.js";
 import productsRoutes from "./routes/products.routes.js";
 import handlebars from 'express-handlebars';
 import viewsRouter from "./routes/views.routes.js";
-import mongoose from "mongoose";
-import cookieParser from "cookie-parser";
+import mongoose from "mongoose";;
 import path from "path";
 import { fileURLToPath } from "url";
 
@@ -16,13 +15,6 @@ const app = express();
 app.use(express.json());
 app.use(urlencoded({extended: true}));
 app.use(express.static('public'));
-
-// Cookies
-app.use(cookieParser());
-
-app.get("/setCookie", (req,res) =>{
-  res.cookie('codercookie', 'Esto es una cookie', {maxAge: 5000}).send({message: "Cookie seteada"})
-})
 
 
 // Mongo settings
