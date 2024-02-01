@@ -8,10 +8,6 @@ import cookieParser from "cookie-parser";
 import path from "path";
 import { fileURLToPath } from "url";
 
-// Configuracion Extra para path
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
 
 const PORT = 8080;
 const app = express();
@@ -39,6 +35,11 @@ const hbs = handlebars.create({
   }
 })
 
+// Configuracion Extra para el path
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+
 // Handlebars settings
 app.engine('handlebars', hbs.engine);
 app.set('views', path.join(__dirname, "views"));
@@ -48,6 +49,7 @@ app.set('view engine', 'handlebars');
 app.use("/api/products", productsRoutes);
 app.use("/api/carts", cartsRoutes);
 app.use('/', viewsRouter);
+
 
 app.listen(PORT, () => {
   console.log("Servido funcionando en puerto " + PORT);

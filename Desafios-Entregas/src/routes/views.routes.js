@@ -49,5 +49,6 @@ viewsRouter.get("/:cId", async (req, res) => {
     console.error(error);
     res.status(500).json({ message: "Error fetching cart details" });
   }
-});
+}); 
+
 export default viewsRouter;

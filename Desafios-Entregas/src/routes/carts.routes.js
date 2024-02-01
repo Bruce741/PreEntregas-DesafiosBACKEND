@@ -10,15 +10,15 @@ const cartsRoutes = Router();
 cartsRoutes.get("/", async (req, res) => {
   const carts = await cartsModel.find();
   res.send({ carts });
-});
+}); 
 
 // Obtener Carrito por ID
 cartsRoutes.get("/:cId", async (req, res) => {
   const { cId } = req.params;
   const cartById = await cartsModel.findOne({ _id: cId }).populate('products.product');
   res.send(cartById);
-});
-
+}); 
+ 
 // Crear Carrito
 cartsRoutes.post("/", async (req, res) => {
   const newCart = [];
