@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { productsModel } from "../dao/models/products.models.js";
+import { cartsModel } from "../dao/models/carts.models.js";
 
 const viewsRouter = Router();
 
@@ -34,10 +35,10 @@ viewsRouter.get("/products", async (req,res) => {
 });
 
 // Vista del carro
-viewsRouter.get("/:cid", async (req, res) => {
+viewsRouter.get("/:cId", async (req, res) => {
   try {
-    const { cid } = req.params;
-    const cart = await cartsModel.findOne({ _id: cid }).populate("products.product");
+    const { cId } = req.params;
+    const cart = await cartsModel.findOne({ _id: cId }).populate("products.product");
 
     if (!cart) {
       return res.status(404).json({ message: "Cart Not Found" });
