@@ -7,7 +7,7 @@ const productManager = new ProductManager("./src/productos.json");
 
 const productsRoutes = Router();
 
-// Obtener todos los productos
+// Obtener todos los productos // 
 productsRoutes.get("/", async (req, res) => {
   try {
     const { limit = 10, page = 1, query = "", sort = "" } = req.query;
@@ -31,7 +31,7 @@ productsRoutes.get("/", async (req, res) => {
   }
 }); 
 
-// Obtener Productos por el ID
+// Obtener Productos por el ID //
 productsRoutes.get("/:id", async (req, res) => {
   const { id } = req.params;
   let product = await productsModel.findOne({ _id: id });
@@ -43,7 +43,7 @@ productsRoutes.get("/:id", async (req, res) => {
   return res.send({ product });
 });
 
-// Añadir productos
+// Añadir productos // 
 productsRoutes.post("/", uploader.single('file'), async (req, res) => {
   try {
     const newProduct = req.body;
@@ -67,22 +67,26 @@ productsRoutes.put("/:pid", async (req, res) => {
     }
 
     const existingProduct = await productsModel.findOne({ _id: pid });
+    
     if (!existingProduct) {
       return res.status(404).json({ message: "Product Not Found" });
     }
+    await productsModel.updateOne({ _id: pid }, updatedInfo);
 
-    const update = await productsModel.updateOne({ _id: pid }, updatedInfo);
+    return res.status(404).json({ message: "Product updated" });
 
-    if (update.ModifiedCount > 0) {
+   /* Codigo para chequear si cambio, pero que me traba el sv xd
+   if (update.ModifiedCount > 0) {
       return res.status(201).json({ message: "Product Updated" });
-    }
+    } */
+
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: "Product not Added" });
+    res.status(500).json({ message: "Product not updated" });
   }
 });
 
-// Eliminar un producto por su ID
+// Eliminar un producto por su ID // 
 productsRoutes.delete("/:pid", async (req, res) => {
   try {
     const { pid } = req.params;

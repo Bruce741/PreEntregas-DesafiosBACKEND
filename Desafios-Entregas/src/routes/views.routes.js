@@ -15,12 +15,12 @@ viewsRouter.get("/", async (req, res) => {
   }
 });
 
-// Vista para añadir productos
+// Vista para añadir productos //
 viewsRouter.get("/add-products", (req,res) => {
   res.render('add-products');
 });
 
-// Vista de los productos
+// Vista de los productos // (Falta poder añadir productos a carrito)
 viewsRouter.get("/products", async (req,res) => {
   const {limit = 10, page = 1, query = "", sort = ""} = req.query;
   const [code,value] = query.split(":");
@@ -34,11 +34,11 @@ viewsRouter.get("/products", async (req,res) => {
   res.render('products', products)
 });
 
-// Vista del carro
+// Vista del carro // 
 viewsRouter.get("/:cId", async (req, res) => {
   try {
     const { cId } = req.params;
-    const cart = await cartsModel.findOne({ _id: cId }).populate("products.product");
+    const cart = await cartsModel.findOne({ _id: cId }).populate("productos.product");
 
     if (!cart) {
       return res.status(404).json({ message: "Cart Not Found" });
