@@ -35,7 +35,7 @@ viewsRouter.get("/products", async (req,res) => {
 });
 
 // Vista del carro // 
-viewsRouter.get("/:cId", async (req, res) => {
+viewsRouter.get("/carts/:cId", async (req, res) => {
   try {
     const { cId } = req.params;
     const cart = await cartsModel.findOne({ _id: cId }).populate("productos.product");

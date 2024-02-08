@@ -56,7 +56,7 @@ productsRoutes.post("/", uploader.single('file'), async (req, res) => {
   }
 });
 
-// Actualizar producto por ID
+// Actualizar producto por ID // 
 productsRoutes.put("/:pid", async (req, res) => {
   try {
     const { pid } = req.params;
