@@ -3,7 +3,8 @@ import cartsRoutes from "./routes/carts.routes.js";
 import productsRoutes from "./routes/products.routes.js";
 import handlebars from 'express-handlebars';
 import viewsRouter from "./routes/views.routes.js";
-import mongoose from "mongoose";;
+import mongoose from "mongoose";
+import cookieParser from "cookie-parser";
 import path from "path";
 import { fileURLToPath } from "url";
 

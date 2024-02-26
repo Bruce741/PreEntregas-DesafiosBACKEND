@@ -34,11 +34,11 @@ viewsRouter.get("/products", async (req,res) => {
   res.render('products', products)
 });
 
-// Vista del carro // 
-viewsRouter.get("/carts/:cId", async (req, res) => {
+// Vista del carro
+viewsRouter.get("/:cId", async (req, res) => {
   try {
     const { cId } = req.params;
-    const cart = await cartsModel.findOne({ _id: cId }).populate("productos.product");
+    const cart = await cartsModel.findOne({ _id: cId }).populate("products.product");
 
     if (!cart) {
       return res.status(404).json({ message: "Cart Not Found" });

@@ -11,11 +11,28 @@ const cartsRoutes = Router();
 // Obtener Carritos //
 cartsRoutes.get("/", async (req, res) => {
   const carts = await cartsModel.find();
-  return res.send({ carts });
-});
+  res.send({ carts });
+}); 
 
 // Obtener Carrito por ID
 cartsRoutes.get("/:cId", async (req, res) => {
+  const { cId } = req.params;
+  const cartById = await cartsModel.findOne({ _id: cId }).populate('products.product');
+  res.send(cartById);
+}); 
+ 
+// Crear Carrito
+cartsRoutes.post("/", async (req, res) => {
+  const newCart = [];
+  const cartAdded = await cartsModel.create(newCart);
+  if (!cartAdded) {
+    return res.status(400).send({ message: "error: cart not added" });
+  }
+  res.send({ message: "Cart added" });
+});
+
+//Añadir producto al carrito
+cartsRoutes.post("/:cId/product/:pId", async (req, res) => {
   try {
     const { cId } = req.params;
     const cartById = await cartsModel
