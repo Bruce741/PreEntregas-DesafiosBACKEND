@@ -15,7 +15,7 @@ viewsRoutes.get("/add-products", (req, res) => {
   res.render("add-products");
 });
 
-// Vista de los productos // (Falta poder añadir productos a carrito) (Problema con pasar 2 variables, user y products)
+// Vista de los productos // (Problema con pasar 2 variables, user y products)
 viewsRoutes.get("/products", async (req, res) => {
   const { user } = req.session;
   const { limit = 10, page = 1, query = "", sort = "" } = req.query;
@@ -31,9 +31,9 @@ viewsRoutes.get("/products", async (req, res) => {
   products.payload = products.docs;
   delete products.docs;
 
-  // Verificar si el usuario es un administrador
+  // 
   const isAdmin = user.rol === "admin";
-
+  console.log(isAdmin)
   res.render("products", { user, isAdmin, products });
 });
 
