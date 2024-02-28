@@ -15,8 +15,9 @@ viewsRoutes.get("/add-products", (req, res) => {
   res.render("add-products");
 });
 
-// Vista de los productos // (Falta poder añadir productos a carrito)
+// Vista de los productos // (Falta poder añadir productos a carrito) (Problema con pasar 2 variables, user y products)
 viewsRoutes.get("/products", async (req, res) => {
+  const { user } = req.session;
   const { limit = 10, page = 1, query = "", sort = "" } = req.query;
   const [code, value] = query.split(":");
   const products = await productsModel.paginate(
@@ -29,7 +30,11 @@ viewsRoutes.get("/products", async (req, res) => {
   );
   products.payload = products.docs;
   delete products.docs;
-  res.render("products", products);
+
+  // Verificar si el usuario es un administrador
+  const isAdmin = user.rol === "admin";
+
+  res.render("products", { user, isAdmin, products });
 });
 
 // Vista del carro
@@ -44,7 +49,7 @@ viewsRoutes.get("/carts/:cId", async (req, res) => {
       return res.status(404).json({ message: "Cart Not Found" });
     }
 
-    res.render("cart", { cart });
+    res.render("cart", cart);
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Error fetching cart details" });

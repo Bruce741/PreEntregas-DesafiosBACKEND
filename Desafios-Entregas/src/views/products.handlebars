@@ -1,20 +1,27 @@
+{{#if isAdmin}}
+  <h2>Panel de Administrador</h2>
+  <h1>Bienvenido ADMIN</h1>
+{{else}}
+  <h2>Bienvenido {{user.first_name}} {{user.last_name}}</h2>
+{{/if}}
+
 <h1>Products</h1>
-{{#each payload}}
+{{#each products.payload}}
   <p>Id: {{this._id}}</p>
   <p>Title: {{this.description}}</p>
   <p>Price: {{this.price}}</p>
   <p>Status: {{this.available}}</p>
   <p>Code: {{this.code}}</p>
-  <p>Stock: {{ths.stock}}</p>
+  <p>Stock: {{this.stock}}</p>
   <button id="{{this._id}}Btn">Agregar al carrito</button>
 {{/each}}
 
-{{#if hasPrevPage}}
-  <button><a href="/products?page={{prevPage}}">Anterior</a></button>
+{{#if products.hasPrevPage}}
+  <button><a href="/products?page={{products.prevPage}}">Anterior</a></button>
 {{/if}}
 
-{{#if hasNextPage}}
-  <button><a href="/products?page={{nextPage}}">Siguiente</a></button>
+{{#if products.hasNextPage}}
+  <button><a href="/products?page={{products.nextPage}}">Siguiente</a></button>
 {{/if}}
 
 <script src="../../public/js/products.js"></script>
