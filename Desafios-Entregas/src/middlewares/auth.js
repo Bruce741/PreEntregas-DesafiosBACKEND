@@ -1,4 +1,4 @@
-export const checkLogged = (req,res, next) =>{
+export const checkNotLogged = (req,res, next) =>{
     if(!req.session.user){
         return res.redirect("/login")
     }

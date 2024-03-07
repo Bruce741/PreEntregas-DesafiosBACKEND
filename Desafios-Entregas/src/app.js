@@ -10,6 +10,10 @@ import { fileURLToPath } from "url";
 import session from "express-session";
 import MongoStore from "connect-mongo";
 import sessionsRoutes from "./routes/sessions.routes.js";
+import passport from "passport";
+import initializePassport from "./config/passport.config.js";
+
+
 
 const PORT = 8080;
 const app = express();
@@ -57,6 +61,12 @@ app.use('/api/sessions', sessionsRoutes);
 
 // Cookies 
 app.use(cookieParser());
+
+// Passport
+initializePassport();
+app.use(passport.initialize());
+app.use(passport.session());
+
 
 app.listen(PORT, () => {
   console.log("Servido funcionando en puerto " + PORT);

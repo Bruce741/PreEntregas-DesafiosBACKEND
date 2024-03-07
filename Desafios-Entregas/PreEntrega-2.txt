@@ -1,2 +1,0 @@
-Este archivo existe para asegurarme que estoy en el repo correcto 
-Tambien para saber si pude añadir los cambios correctamente al nuevo repositorio

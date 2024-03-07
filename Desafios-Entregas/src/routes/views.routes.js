@@ -1,11 +1,11 @@
 import { Router } from "express";
 import { productsModel } from "../dao/models/products.models.js";
 import { cartsModel } from "../dao/models/carts.models.js";
-import { checkLogged, checkExistingUser} from "../middlewares/auth.js";
+import { checkNotLogged, checkExistingUser} from "../middlewares/auth.js";
 const viewsRoutes = Router();
 
 // Vista index
-viewsRoutes.get("/", checkLogged ,async (req, res) => {
+viewsRoutes.get("/", checkNotLogged ,async (req, res) => {
   const { user } = req.session;
   res.render("index", user);
 });
@@ -15,7 +15,7 @@ viewsRoutes.get("/add-products", (req, res) => {
   res.render("add-products");
 });
 
-// Vista de los productos // (Problema con pasar 2 variables, user y products)
+// Vista de los productos // 
 viewsRoutes.get("/products", async (req, res) => {
   const { user } = req.session;
   const { limit = 10, page = 1, query = "", sort = "" } = req.query;
@@ -57,13 +57,23 @@ viewsRoutes.get("/carts/:cId", async (req, res) => {
 });
 
 // Vista de login
-viewsRoutes.get("/login", checkExistingUser,async (req, res) => {
+viewsRoutes.get("/login", checkExistingUser, async (req, res) => {
   res.render("login");
 });
 
 // Vista de register
 viewsRoutes.get("/register", checkExistingUser, async (req,res) => {
   res.render("register");
+})
+
+// Vista failedRegister
+viewsRoutes.get("/failedRegister", async (req,res) => {
+  res.render("failedRegister");
+})
+
+// Vista failedLogin
+viewsRoutes.get("/failedLogin", async (req,res) => {
+  res.render("failedLogin");
 })
 
 export default viewsRoutes;
