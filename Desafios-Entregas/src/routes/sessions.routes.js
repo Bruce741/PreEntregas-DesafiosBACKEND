@@ -46,6 +46,7 @@ sessionsRoutes.get('/github', passport.authenticate('github', {scope: ['user:ema
 
 //GithubCallback
 sessionsRoutes.get('/githubCallback', passport.authenticate('github', {failureRedirect: '/login'}), (req,res) =>{
+  req.session.user = req.user;
   res.redirect('/');
 })
 
